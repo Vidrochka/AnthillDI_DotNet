@@ -100,13 +100,15 @@ namespace AnthillDI_DotNet
             IEnumerable<ConstructorInfo> markedCtr
                 = constructors.Where(ctr => ctr.GetCustomAttributes<DIConstructorAttribute>().Any());
 
+            TType injectedObject = null;
+
             if (!markedCtr.Any())
             {
                 if (!constructors.Any(ctr => !ctr.GetParameters().Any()))
                     throw new UnknownConstructorException(
                         $"Constructor attribute not defined. Type [{typeof(TType).FullName}]");
 
-                return Activator.CreateInstance(typeof(TType)) as TType;
+                injectedObject = Activator.CreateInstance(typeof(TType)) as TType;
             }
             else
             {
@@ -122,11 +124,36 @@ namespace AnthillDI_DotNet
                     throw new UnknownConstructorException(
                         $"We cant determine the correct constructor. Type [{typeof(TType).FullName}]");
 
-                return Activator.CreateInstance(typeof(TType),
+                injectedObject = Activator.CreateInstance(typeof(TType),
                         suitableCtr.Single()
                             .GetParameters()
                             .Select(param => GetObject(param.ParameterType)).ToArray())
                     as TType;
+            }
+
+            FillProperty(ref injectedObject);
+            FillField(ref injectedObject);
+
+            return injectedObject;
+        }
+
+        private void FillProperty<TType>(ref TType injectedObject)
+        {
+            IEnumerable<PropertyInfo> properties = typeof(TType).GetProperties().Where(property => property.GetCustomAttributes<DIPropertyAttribute>().Any());
+
+            foreach (PropertyInfo property in properties)
+            {
+                property.SetValue(injectedObject, GetObject(property.PropertyType));
+            }
+        }
+
+        private void FillField<TType>(ref TType injectedObject)
+        {
+            IEnumerable<FieldInfo> fields = typeof(TType).GetFields().Where(field => field.GetCustomAttributes<DIFieldAttribute>().Any());
+
+            foreach (FieldInfo field in fields)
+            {
+                field.SetValue(injectedObject, GetObject(field.FieldType));
             }
         }
     }

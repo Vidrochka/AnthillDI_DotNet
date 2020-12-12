@@ -29,5 +29,35 @@ namespace AnthillDI_DotNet.Tests
 
             Assert.Equal(type.WithoutParam, type.WithSingleParam.TestInjectedClass);
         }
+
+        [Fact]
+        public void TestInjectProperty_Ok()
+        {
+            AHDI di = new AHDI();
+
+            di.SetRequestedObject<ClassWithPropertyInjection>();
+            di.SetSingletonObject<ClassWithoutParamsInConstructor>();
+            di.SetSingletonObject<ClassWithSingleParameterInConstructor>();
+
+            ClassWithPropertyInjection type = di.GetObject<ClassWithPropertyInjection>();
+
+            Assert.Equal(1, type.TestPropertyInjection.TestInjectedClass.TestNum);
+            Assert.Equal("1", type.TestPropertyInjection.TestInjectedClass.TestStr);
+        }
+
+        [Fact]
+        public void TestInjectField_Ok()
+        {
+            AHDI di = new AHDI();
+
+            di.SetRequestedObject<ClassWithFieldInjection>();
+            di.SetSingletonObject<ClassWithoutParamsInConstructor>();
+            di.SetSingletonObject<ClassWithSingleParameterInConstructor>();
+
+            ClassWithFieldInjection type = di.GetObject<ClassWithFieldInjection>();
+
+            Assert.Equal(1, type.TestPropertyInjection.TestInjectedClass.TestNum);
+            Assert.Equal("1", type.TestPropertyInjection.TestInjectedClass.TestStr);
+        }
     }
 }
