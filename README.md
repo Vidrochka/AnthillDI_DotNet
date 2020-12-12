@@ -94,7 +94,7 @@ namespace Test
         public string FStr;
         public D DField;
 
-        public E(string str, D d)
+        public F(string str, D d)
         {
             Fstr = str;
             DField = d;
