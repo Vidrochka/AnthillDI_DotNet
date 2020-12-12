@@ -49,10 +49,10 @@ namespace Test
 {
     public class A
     {
-        public int i;
+        public int I;
         public A()
         {
-            i = 10;
+            I = 10;
         }
     }
 
@@ -79,11 +79,33 @@ namespace Test
         public C CField { get; set; }
     }
 
+    public class E
+    {
+        public string EStr;
+
+        public E(string str)
+        {
+            Estr = str;
+        }
+    }
+
+    public class F
+    {
+        public string FStr;
+        public D DField;
+
+        public E(string str, D d)
+        {
+            Fstr = str;
+            DField = d;
+        }
+    }
+
     public static void Main()
     {
         AHDI di = new AHDI()
 
-        // Для примера использования singleton, в данном контексте можно заменить на SetRequestedObject
+        // Обращаю внимание что тут singleton
         di.SetSingletonObject<A>();
 
         di.SetRequestedObject<B>();
@@ -91,7 +113,24 @@ namespace Test
         di.SetRequestedObject<D>();
 
         // d будет проинициализирован С, С содержит B, а B содержит A
+        // A содержит поле I = 10
         D d = di.GetObject<D>();
+
+        d.CField.BField.AField.I = 99
+
+        // Новый объект D будет проинициализирован новым С, навый С содержит новый B, а новый B содержит старый A, т.к. A - singleton
+        // A содержит поле I = 99 (поменяли выше)
+        D d2 = di.GetObject<D>();
+
+        di.SetRequestedObject<E>((context) => new E("test"));
+
+        //e содержит поле EStr = "test"
+        E e = di.GetObject<E>();
+
+        di.SetRequestedObject<F>((context) => new F("test2", context.GetObject<D>()));
+
+        // f будет содержать новый объект D, собранный из DI контекста
+        F f = di.GetObject<F>();
     }
 }
 ```
