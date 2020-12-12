@@ -39,7 +39,7 @@ namespace AnthillDI_DotNet
 
         public void SetRequestedObject<TType>() where TType : class => SetRequestedObject<TType,TType>();
 
-        public void SetRequestedObject<TInterface, TType>() where TType : class
+        public void SetRequestedObject<TInterface, TType>() where TType : class, TInterface
         {
             if (VerifyExistence<TInterface>())
             {
@@ -61,7 +61,7 @@ namespace AnthillDI_DotNet
 
         public void SetSingletonObject<TType>() where TType : class => SetSingletonObject<TType, TType>();
 
-        public void SetSingletonObject<TInterface, TType>() where TType : class
+        public void SetSingletonObject<TInterface, TType>() where TType : class, TInterface
         {
             if (VerifyExistence<TType>())
             {
