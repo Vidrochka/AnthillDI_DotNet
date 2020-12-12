@@ -41,7 +41,7 @@ Simple .net dependency injection
 
 ### Пример
 
-```
+```C#
 using AnthillDI_DotNet;
 using AnthillDI_DotNet.Attribute;
 
