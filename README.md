@@ -103,7 +103,7 @@ namespace Test
 
     public static void Main()
     {
-        AHDI di = new AHDI()
+        AHDI di = new AHDI();
 
         // Обращаю внимание что тут singleton
         di.SetSingletonObject<A>();
@@ -116,7 +116,7 @@ namespace Test
         // A содержит поле I = 10
         D d = di.GetObject<D>();
 
-        d.CField.BField.AField.I = 99
+        d.CField.BField.AField.I = 99;
 
         // Новый объект D будет проинициализирован новым С, навый С содержит новый B, а новый B содержит старый A, т.к. A - singleton
         // A содержит поле I = 99 (поменяли выше)
