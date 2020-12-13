@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using AnthillDI_DotNet.AddedFunctionality.Initialization;
 using AnthillDI_DotNet.Attribute;
 using AnthillDI_DotNet.Exceptions;
 
 namespace AnthillDI_DotNet
 {
-    public class AHDI
+    public partial class AHDI
     {
         private readonly Dictionary<Type, Func<object>> _requestedInjectedObjects = new Dictionary<Type, Func<object>>();
         private readonly Dictionary<Type, SingletonContainer> _singletonInjectedObject = new Dictionary<Type, SingletonContainer>();
@@ -36,6 +37,11 @@ namespace AnthillDI_DotNet
         }
 
         public TType GetObject<TType>() where TType : class => GetObject(typeof(TType)) as TType;
+
+        public void InitializeContext(IInitializationContext initializationContext)
+        {
+            initializationContext.Initialize(this);
+        }
 
         public void SetRequestedObject<TType>() where TType : class => SetRequestedObject<TType,TType>();
 
@@ -104,7 +110,7 @@ namespace AnthillDI_DotNet
 
             if (!markedCtr.Any())
             {
-                if (!constructors.Any(ctr => !ctr.GetParameters().Any()))
+                if (constructors.All(ctr => ctr.GetParameters().Any()))
                     throw new UnknownConstructorException(
                         $"Constructor attribute not defined. Type [{typeof(TType).FullName}]");
 
